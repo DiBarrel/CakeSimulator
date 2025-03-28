@@ -5,8 +5,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class CupClicksAnimation : MonoBehaviour
+public class CupClicksAnimation : MonoBehaviour, IPointerClickHandler
 {
     private Animator animator;
     private float animationSpeed = 1f;
@@ -26,10 +27,14 @@ public class CupClicksAnimation : MonoBehaviour
             clicksProgress = Mathf.MoveTowards(clicksProgress, (float)currentClicks / maxClicks, 
                 animationSpeed * Time.deltaTime);
         }
-        animator.Play(0, 1, clicksProgress);
+        animator.Play(0, -1, clicksProgress);
     }
 
     public void OnObjectClicks()
+    {
+        
+    }
+    public void OnPointerClick(PointerEventData eventData)
     {
         currentClicks++;
         if (currentClicks >= maxClicks)
@@ -37,5 +42,6 @@ public class CupClicksAnimation : MonoBehaviour
             currentClicks = 0;
             clicksProgress = 0f;
         }
+        Debug.Log("Клик прошёл сучка");
     }
 }
