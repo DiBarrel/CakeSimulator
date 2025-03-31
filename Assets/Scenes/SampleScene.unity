@@ -1372,7 +1372,8 @@ MonoBehaviour:
   camerasList:
   - {fileID: 963194227}
   - {fileID: 471638968}
-  swipeThreshold: 50
+  swipeBeginThresholdPercent: 8
+  swipeThresholdPercent: 40
 --- !u!1 &1379746809
 GameObject:
   m_ObjectHideFlags: 0

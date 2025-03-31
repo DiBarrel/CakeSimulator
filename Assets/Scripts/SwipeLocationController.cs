@@ -12,14 +12,13 @@ using static UnityEngine.GraphicsBuffer;
 
 public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public List<Camera> camerasList = new List<Camera>();
+    public List<Camera> camerasList = new();
     public float swipeBeginThresholdPercent = 8f; // TODO
     public float swipeThresholdPercent = 25f;
 
-    private List<RawImage> _rawImagesList = new List<RawImage>();
+    private List<RawImage> _rawImagesList = new();
     private List<Vector2> _rawImagesVelocityList;
-    private List<RenderTexture> _renderTexturesList = new List<RenderTexture>();
-    private int _curlocationIndex;
+    private int _curLocationIndex;
     private bool _isSwiping = false;
     private Vector2 _startTouchPosition;
     private Vector2 _endTouchPosition;
@@ -53,7 +52,6 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
                 RenderTextureFormat.ARGB32);
             renderTexture.name = $"RenderTexture_{camerasList[i].name}";
             renderTexture.Create();
-            _renderTexturesList.Add(renderTexture);
 
             camerasList[i].targetTexture = renderTexture;
             camerasList[i].forceIntoRenderTexture = true;
@@ -107,7 +105,7 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
         {
             RectTransform rt = _rawImagesList[i].GetComponent<RectTransform>();
             rt.anchoredPosition = new Vector2(
-                CalculateXPos(i, _curlocationIndex) + Mathf.Clamp(newPos.x, -width, width), 0);
+                CalculateLocationImageXPos(i, _curLocationIndex) + Mathf.Clamp(newPos.x, -width, width), 0);
         }
     }
 
@@ -119,21 +117,19 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
 
         if (swipePercent > swipeThresholdPercent)
         {
-            //camerasList[_curlocationIndex].tag = "Untagged";
-            if (swipeDistance > 0 && _curlocationIndex != 0)
+            if (swipeDistance > 0 && _curLocationIndex != 0)
             {
-                _curlocationIndex -= 1;
+                _curLocationIndex -= 1;
             }
-            else if (swipeDistance < 0 && _curlocationIndex != camerasList.Count-1)
+            else if (swipeDistance < 0 && _curLocationIndex != camerasList.Count-1)
             {
-                _curlocationIndex += 1;
+                _curLocationIndex += 1;
             }
-            //camerasList[_curlocationIndex].tag = "MainCamera";
-            //this.enabled = false;
         }
         _isSwiping = false;
     }
 
+    // TODO on screen size update
     //private void UpdateRenderTextures()
     //{
     //    // ”ничтожаем старые Render Texture (если есть)
@@ -155,11 +151,10 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
 
     private void MoveImagesToThierPositions()
     {
-        Debug.Log($"NOW on loc #{_curlocationIndex}");
         for (int i = 0; i < _rawImagesList.Count; i++)
         {
             RectTransform rt = _rawImagesList[i].GetComponent<RectTransform>();
-            Vector2 targetPos = new Vector2(CalculateXPos(i, _curlocationIndex), rt.anchoredPosition.y);
+            Vector2 targetPos = new Vector2(CalculateLocationImageXPos(i, _curLocationIndex), rt.anchoredPosition.y);
             Vector2 currentVelocity = _rawImagesVelocityList[i];
             rt.anchoredPosition = Vector2.SmoothDamp(
                 rt.anchoredPosition,
@@ -171,27 +166,9 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
         }
     }
 
-    private int CalculateXPos(int locationIndex, int curLocation)
+    private int CalculateLocationImageXPos(int locationIndex, int curLocation)
     {
         return (locationIndex - curLocation) * Screen.width;
     }
 
-    private void ClearOldTextures()
-    {
-        foreach (var rt in _renderTexturesList)
-        {
-            if (rt != null)
-            {
-                rt.Release();
-                Destroy(rt);
-            }
-        }
-        _renderTexturesList.Clear();
-        _rawImagesList.Clear();
-    }
-
-    private void OnDestroy()
-    {
-        ClearOldTextures();
-    }
 }
