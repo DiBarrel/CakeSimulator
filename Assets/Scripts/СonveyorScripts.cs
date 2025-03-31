@@ -5,18 +5,18 @@ using UnityEngine;
 public class СonveyorScripts : MonoBehaviour
 {
     public float conveyorSpeed = 1.0f;
-    public Vector3 diraction = Vector3.forward;
+    public Vector3 direction = Vector3.forward;
+
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Cake")) // проверяем тэг объекта на конвеере
+        if (other.CompareTag("Cake"))
         {
-            Rigidbody cakeRb = other.GetComponent<Rigidbody>();
-            if (cakeRb != null) //если что-то есть, задаем движение объекту
+            Rigidbody cakeRB = other.GetComponent<Rigidbody>();
+            if (cakeRB != null)
             {
-                Vector3 movement = diraction.normalized * conveyorSpeed * Time.fixedDeltaTime;
-                cakeRb.MovePosition(cakeRb.position + movement);
+                Vector3 movement = direction.normalized * conveyorSpeed * Time.fixedDeltaTime;
+                cakeRB.MovePosition(cakeRB.position + movement);
             }
         }
     }
-
 }
