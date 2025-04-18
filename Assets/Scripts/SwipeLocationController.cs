@@ -22,13 +22,21 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
         SetupCanvas();
     }
 
+    public void Update()
+    {
+        if (!_isSwiping)
+        {
+            MoveImagesToThierPositions();
+        }
+    }
+
     private void SetupCanvas()
     {
         // Creating background image
         GameObject bgImageObj = new GameObject("bgImage");
         bgImageObj.transform.SetParent(transform, false);
         RawImage bgImage = bgImageObj.AddComponent<RawImage>();
-        bgImage.color = new UnityEngine.Color(0.2f, 0.2f, 0.2f, 1f);
+        bgImage.color = new UnityEngine.Color(0.1f, 0.1f, 0.1f, 1f);
 
         RectTransform rt = bgImage.GetComponent<RectTransform>();
         rt.anchorMin = Vector2.zero;
@@ -63,18 +71,10 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
             rt.anchorMin = Vector2.zero;
             rt.anchorMax = Vector2.one;
             rt.offsetMin = rt.offsetMax = Vector2.zero;
-            rt.anchoredPosition = new Vector2(Screen.width*i, 0);
+            rt.anchoredPosition = new Vector2(Screen.width * i, 0);
 
             // Creating velocity data
             _rawImagesVelocityList = new List<Vector2>(new Vector2[camerasList.Count]);
-        }
-    }
-
-    public void Update()
-    {
-        if (!_isSwiping)
-        {
-            MoveImagesToThierPositions();
         }
     }
 
