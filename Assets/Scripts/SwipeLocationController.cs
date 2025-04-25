@@ -145,7 +145,6 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
 
     private void MoveImagesToThierPositions()
     {
-        //Debug.Log(_rawImagesList.Count);
         for (int i = 0; i < _rawImagesList.Count; i++)
         {
             RectTransform rt = _rawImagesList[i].GetComponent<RectTransform>();

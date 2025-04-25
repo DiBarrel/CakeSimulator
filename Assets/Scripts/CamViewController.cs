@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Android.Types;
 using UnityEngine;
 
 public class CamViewController : MonoBehaviour
 {
     public GameObject target;
     [Range(10, 90)]
-    public float angle = 27f; // TODO get current
+    public float angle = 27f; // TODO
     public float camHeight = 4f; // TODO auto 'far' and height
     [Range(0, 100)]
     public float camBoundsPercent = 20f;
@@ -31,6 +32,7 @@ public class CamViewController : MonoBehaviour
             bounds.center.z
         );
         transform.LookAt(bounds.center);
+        angle = transform.eulerAngles.x;
 
         Camera cam = GetComponent<Camera>();
         cam.orthographicSize = GetRequiredOrthoSize(bounds);
@@ -38,8 +40,9 @@ public class CamViewController : MonoBehaviour
 
     private float GetRequiredOrthoSize(Bounds bounds)
     {
-        float objectWidthX = bounds.size.x * angle / 100;
+        float objectWidthX = bounds.size.x * Mathf.Sin(angle*Mathf.Deg2Rad);
         float objectWidthZ = bounds.size.z;
+
 
         float screenAspect = (float)Screen.width / Screen.height;
 
