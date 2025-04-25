@@ -52,4 +52,7 @@ public class CamViewController : MonoBehaviour
             return objectWidthX / 2f * (1 + camBoundsPercent / 100);
         }
     }
+
+    private void OnEnable() => GameEventSystem.OnScreenResolutionChanged += Setup;
+    private void OnDisable() => GameEventSystem.OnScreenResolutionChanged -= Setup;
 }

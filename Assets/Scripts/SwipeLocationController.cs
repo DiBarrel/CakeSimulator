@@ -11,8 +11,8 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
     public float swipeThresholdPercent = 25f;
 
     private List<RawImage> _rawImagesList = new();
-    private List<Vector2> _rawImagesVelocityList;
-    private int _curLocationIndex;
+    private List<Vector2> _rawImagesVelocityList = new();
+    private int _curLocationIndex = 0;
     private bool _isSwiping = false;
     private Vector2 _startTouchPosition;
     private Vector2 _endTouchPosition;
@@ -32,6 +32,8 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
 
     private void SetupCanvas()
     {
+        RemoveCanvasItems();
+
         // Creating background image
         GameObject bgImageObj = new GameObject("bgImage");
         bgImageObj.transform.SetParent(transform, false);
@@ -44,9 +46,14 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
         rt.offsetMin = Vector2.zero;
         rt.offsetMax = Vector2.zero;
 
+        CreateRenderTextures();
+    }
+
+    private void CreateRenderTextures()
+    {
         for (int i = 0; i < camerasList.Count; i++)
         {
-            // Creating target texture for cameras
+            // Creating render textures
             RenderTexture renderTexture = new RenderTexture(
                 Screen.width,
                 Screen.height,
@@ -67,7 +74,7 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
             rawImage.texture = renderTexture;
             _rawImagesList.Add(rawImage);
 
-            rt = rawImage.GetComponent<RectTransform>();
+            RectTransform rt = rawImage.GetComponent<RectTransform>();
             rt.anchorMin = Vector2.zero;
             rt.anchorMax = Vector2.one;
             rt.offsetMin = rt.offsetMax = Vector2.zero;
@@ -76,6 +83,19 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
             // Creating velocity data
             _rawImagesVelocityList = new List<Vector2>(new Vector2[camerasList.Count]);
         }
+    }
+
+    private void RemoveCanvasItems()
+    {
+        foreach (var rawImage in _rawImagesList)
+        {
+            if (rawImage != null)
+            {
+                Destroy(rawImage);
+            }
+        }
+        _rawImagesList.Clear();
+        _rawImagesVelocityList.Clear();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -123,28 +143,9 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
         _isSwiping = false;
     }
 
-    // TODO on screen size update
-    //private void UpdateRenderTextures()
-    //{
-    //    // Уничтожаем старые Render Texture (если есть)
-    //    if (cam1RT != null) cam1RT.Release();
-    //    if (cam2RT != null) cam2RT.Release();
-
-    //    // Создаём новые Render Texture с текущим размером экрана
-    //    cam1RT = new RenderTexture(Screen.width, Screen.height, 24);
-    //    cam2RT = new RenderTexture(Screen.width, Screen.height, 24);
-
-    //    // Назначаем камерам новые Render Texture
-    //    cam1.targetTexture = cam1RT;
-    //    cam2.targetTexture = cam2RT;
-
-    //    // Привязываем RawImage к новым Render Texture
-    //    cam1Display.texture = cam1RT;
-    //    cam2Display.texture = cam2RT;
-    //}
-
     private void MoveImagesToThierPositions()
     {
+        //Debug.Log(_rawImagesList.Count);
         for (int i = 0; i < _rawImagesList.Count; i++)
         {
             RectTransform rt = _rawImagesList[i].GetComponent<RectTransform>();
@@ -165,4 +166,6 @@ public class SwipeLocationController : MonoBehaviour, IBeginDragHandler, IDragHa
         return (locationIndex - curLocation) * Screen.width;
     }
 
+    private void OnEnable() => GameEventSystem.OnScreenResolutionChanged += SetupCanvas;
+    private void OnDisable() => GameEventSystem.OnScreenResolutionChanged -= SetupCanvas;
 }
