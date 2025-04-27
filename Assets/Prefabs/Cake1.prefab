@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 5896967897090259808}
   - component: {fileID: 5521392129160008203}
   - component: {fileID: 5703339899507847262}
+  - component: {fileID: 2574758779870058360}
   m_Layer: 0
   m_Name: Cake1
   m_TagString: Cake
@@ -147,6 +148,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &2574758779870058360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6529636321496015322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca2b0045dd6cb9488428bca02a7b3f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 0}
 --- !u!1 &8949112183264432535
 GameObject:
   m_ObjectHideFlags: 0
